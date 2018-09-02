@@ -111,7 +111,7 @@ iframe::-webkit-scrollbar-thumb{border-radius:5px;background-color:#0078c1;}
 .not-submited-agahi{position:relative;color:red;float: left;}
 .pagination{direction: ltr;}
 #change-city{margin-top:8px;}
-#btn-top-scroller i{background-color: red;color: yellow;}
+#btn-top-scroller i{background-color: red;color: yellow;font-size:35px;width: 45px;height: 45px;}
 .card {margin: 17px 0;}
 .card .card-text{line-height: 2;}
 .card .card-body{height: 240px;}
@@ -144,7 +144,7 @@ iframe::-webkit-scrollbar-thumb{border-radius:5px;background-color:#0078c1;}
 .c-form #my-captcha-image{margin-right:-15px;}
 .site-about{background-color: #fff;padding: 18px;border-radius: 1px;}
 .about-sn img:hover{opacity: .8;}
-#btn-top-scroller{margin-bottom:30px;}
+#btn-top-scroller{margin-bottom:50px;}
 #reg-li{word-spacing: -10px;}
 #home-li{word-spacing: -10px;}
 #log-li{word-spacing: -10px;}

@@ -11,6 +11,7 @@ use app\models\Agahi;
 use app\models\Reports;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 class CityController extends \yii\web\Controller
 {
     public function behaviors()
@@ -206,5 +207,24 @@ class CityController extends \yii\web\Controller
                 Mahale::deleteAll('id='.$id);
             endif;
         endif;
+    }
+    # -- Android API -- # 
+    public function actionGetcity()
+    {
+        if(Yii::$app->request->post('get_city')):
+            $city = City::find()->all();
+        	$res = [];
+        	foreach ($city as $i => $row) {
+        		$res[$i]['name'] = $row->persian_name;
+                $res[$i]['id'] = $row->id;
+        	}
+        	Yii::$app->response->format = Response::FORMAT_JSON;
+        	return $res;
+        endif;
+    }
+    public function beforeAction($action)
+    {
+        $this->enableCsrfValidation = false;
+        return parent::beforeAction($action);
     }
 }

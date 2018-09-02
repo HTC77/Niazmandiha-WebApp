@@ -38,7 +38,11 @@ class AgahiController extends \yii\web\Controller
             ],
         ];
     }
-
+	public function beforeAction($action)
+    {
+    	$this->enableCsrfValidation=false;
+    	return parent::beforeAction($action);
+    }
     public function actionGetwithchild()
     {
         $cookie=Yii::$app->request->cookies;
@@ -64,10 +68,15 @@ class AgahiController extends \yii\web\Controller
 
     public function actionGet()
     {
-        $cookie=Yii::$app->request->cookies;
-        $city=City::findBySql('SELECT `id` FROM `tbl_city` WHERE `latin_name`="'.$cookie['city']->value.'"')->One();
+        if(isset($_POST['cityId'])):
+            $cityId = $_POST['cityId']; # -- Android -- #
+        else:
+            $cookie=Yii::$app->request->cookies;
+            $city=City::findBySql('SELECT `id` FROM `tbl_city` WHERE `latin_name`="'.$cookie['city']->value.'"')->One();
+            $cityId = $city->id;
+        endif;
         if(Yii::$app->request->post('get_agahi')):
-            $post=Agahi::findBySql('SELECT * FROM `tbl_agahi` WHERE `city_id`='.$city->id.' AND `taeed`=1 ORDER BY `id` DESC LIMIT '.$_POST['lim'].',8')->All();
+            $post=Agahi::findBySql('SELECT * FROM `tbl_agahi` WHERE `city_id`='.$cityId.' AND `taeed`=1 ORDER BY `id` DESC LIMIT '.$_POST['lim'].',8')->All();
             $res=[];
             $i=0;
             foreach ($post as $post):
@@ -81,7 +90,7 @@ class AgahiController extends \yii\web\Controller
             endforeach;
             echo json_encode($res);
         else:
-        return $this->redirect(Yii::$app->homeUrl);
+            return $this->redirect(Yii::$app->homeUrl);
         endif;  
     }
 
@@ -317,4 +326,24 @@ class AgahiController extends \yii\web\Controller
             $action=='create' ? $session['pagination_url']=$page : $session->remove('pagination_url','c_id','model');
         endif;
     }
+
+    public function actionGetdetail() # -- Android API -- #
+    {
+    	if(Yii::$app->request->post('get_detail')):
+    		$id = $_POST['a_id'];
+    		$detail = Agahi::find()->where(['id' => $id])->One();
+            $parent=Category::find()->where(['id'=> $detail->cat->parent])->One();
+    		$res['id'] = $detail->id;
+    		$res['onvan'] = $detail->onvan;
+    		$res['tozihat'] = $detail->tozihat;
+    		$res['tarikh'] = $detail->tarikh;
+    		$res['pic'] = $detail->pic;
+    		$res['cat'] = $parent->onvan.'>'.$detail->cat->onvan;
+    		$res['city'] = $detail->city->persian_name;
+    		$res['mahale'] = $detail->mahale->name;
+    		$res['price'] = $detail->price;
+    		echo json_encode($res);
+    	endif;
+    }
 }
+
