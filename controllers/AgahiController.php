@@ -327,9 +327,9 @@ class AgahiController extends \yii\web\Controller
         endif;
     }
 
-    public function actionGetdetail() # -- Android API -- #
+    public function actionGetdetails() # -- Android API -- #
     {
-    	if(Yii::$app->request->post('get_detail')):
+    	if(Yii::$app->request->post('get_details')):
     		$id = $_POST['a_id'];
     		$detail = Agahi::find()->where(['id' => $id])->One();
             $parent=Category::find()->where(['id'=> $detail->cat->parent])->One();
