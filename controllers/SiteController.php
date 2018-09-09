@@ -145,8 +145,8 @@ class SiteController extends Controller
         elseif(Yii::$app->request->post()):
             $model->load(Yii::$app->request->post());
             $model->password=Yii::$app->getSecurity()->generatePasswordHash($model->password);
-                $model->save(false);
-                return $this->redirect(Yii::$app->homeUrl);
+            $model->save(false);
+            if(!isset($_POST['android_req'])) {return $this->redirect(Yii::$app->homeUrl);}else{} 
         else:
              return $this->render('register',['model'=>$model]); 
         endif;   
@@ -261,5 +261,11 @@ class SiteController extends Controller
         return $this->render('contact', [
             'model' => $model,
         ]);
+    }
+
+    public function beforeAction($action)
+    {
+    	$this->enableCsrfValidation=false;
+    	return parent::beforeAction($action);
     }
 }
