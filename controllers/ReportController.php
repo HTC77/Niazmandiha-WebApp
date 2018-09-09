@@ -7,6 +7,7 @@ use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use app\models\City;
+use app\models\Report;
 class ReportController extends \yii\web\Controller
 {
     public function behaviors()
@@ -78,6 +79,25 @@ class ReportController extends \yii\web\Controller
             }
             echo json_encode($res);
         endif;
+    }
+
+    public function beforeAction($action)
+    {
+    	$this->enableCsrfValidation = false;
+    	return parent::beforeAction($action);
+    }
+
+    public function actionGetreport() #-- Android API --#
+    {
+    	if(Yii::$app->request->post('get_report')):
+    		$model = Report::find()->All();
+    		$res = [];
+    		foreach ($model as $i => $report):
+    			$res[$i]['id'] = $report->id;
+    			$res[$i]['onvan'] = $report->name;
+    		endforeach;
+    		echo json_encode($res);
+    	endif;
     }
 
 }

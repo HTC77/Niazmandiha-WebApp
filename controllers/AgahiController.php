@@ -342,6 +342,9 @@ class AgahiController extends \yii\web\Controller
     		$res['city'] = $detail->city->persian_name;
     		$res['mahale'] = $detail->mahale->name;
     		$res['price'] = $detail->price;
+    		$res['userName'] = $detail->user->name.' '.$detail->user->family;
+    		$res['tel'] = $detail->user->tel;
+    		$res['email'] = $detail->user->email;
     		echo json_encode($res);
     	endif;
     }
