@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
     <div class="parent">
     <h3 align="center">ویرایش دسته بندی</h3>
 
-        <?php $form = ActiveForm::begin(['enableAjaxValidation'=>'true']); ?>
+        <?php $form = ActiveForm::begin(['enableAjaxValidation'=>'true','id'=>'edit_cat']); ?>
 
             <input type="hidden" id="c" name="cat_id" value="cat_id">
             <?= $form->field($model, 'parent')->dropDownList($cat,['prompt'=>'دسته را انتخاب کنید']) ?>
@@ -30,7 +30,7 @@ use yii\widgets\ActiveForm;
     <div class="child">
     <h3 align="center">ویرایش زیر دسته</h3>
 
-        <?php $form = ActiveForm::begin(['enableAjaxValidation'=>'true']); ?>
+        <?php $form = ActiveForm::begin(['enableAjaxValidation'=>'true','id'=>'edit_subCat']); ?>
 
             <input type="hidden" id="c" name="ch_id" value="ch_id">
             <?= $form->field($model, 'parent')->dropDownList($cat,['prompt'=>'دسته را انتخاب کنید']) ?>

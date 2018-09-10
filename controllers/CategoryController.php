@@ -95,6 +95,7 @@ class CategoryController extends \yii\web\Controller
                 else:
                     $model->parent='y';
                     $model->save();
+                    return $this->redirect(Yii::$app->homeUrl.'admin/index');
                 endif;
             elseif(Yii::$app->request->post('c_child')):
                 $model->setScenario('child');
@@ -103,6 +104,7 @@ class CategoryController extends \yii\web\Controller
                     echo json_encode(ActiveForm::validate($model));
                 else:
                     $model->save();
+                    return $this->redirect(Yii::$app->homeUrl.'admin/index');
                 endif;
             else:
                 $cat=new Category();
@@ -127,6 +129,7 @@ class CategoryController extends \yii\web\Controller
                 else:
                     $model->parent='y';
                     $model->update();
+                    return $this->redirect(Yii::$app->homeUrl.'admin/index');
                 endif;
             elseif(Yii::$app->request->post('ch_id')):
                 $model=$model->findOne($_POST['ch_id']);
@@ -136,6 +139,7 @@ class CategoryController extends \yii\web\Controller
                     echo json_encode(ActiveForm::validate($model));
                 else:
                     $model->update();
+                    return $this->redirect(Yii::$app->homeUrl.'admin/index');
                 endif;
             else:
                 $cat=new Category();
