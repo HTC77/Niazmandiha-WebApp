@@ -179,11 +179,13 @@ class SiteController extends Controller
     	if(isset($_POST['android_req'])):
 			Yii::$app->response->format = Response::FORMAT_JSON;
 	    	$model = new LoginForm();   
-	        if ($model->load(Yii::$app->request->post()) && $model->login())
+	        if ($model->load(Yii::$app->request->post()) && $model->login()){
 				$res ["login_result"]="ok";
-	        else
+				$res ["user_id"]=Yii::$app->session['user_id'];
+	        }
+	        else{
 	        	$res ["login_result"]="failure";
-	
+			}
 	    		return $res;
     	endif;
         if (!Yii::$app->user->isGuest) {
