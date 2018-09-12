@@ -33,6 +33,11 @@ class CategoryController extends \yii\web\Controller
             ],
         ];
     }
+    public function beforeAction($action)
+    {
+    	$this->enableCsrfValidation=false;
+    	return parent::beforeAction($action);
+    }
     public function actionGetchild()
     {
     	if(Yii::$app->request->post('get_child'))
