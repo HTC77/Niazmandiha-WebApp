@@ -21,10 +21,10 @@ class AgahiController extends \yii\web\Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['Create','saveagahi','view','details','delete','update','updateagahi','changetaeed','setting','session'],
+                'only' => ['create','view','details',/*'delete','saveagahi',*/'update',/*'updateagahi',*/'changetaeed','setting','session'],
                 'rules' => [
                     [
-                        'actions' => ['Create','saveagahi','view','details','delete','update','updateagahi','changetaeed','setting','session'],
+                        'actions' => ['create','view','details',/*'delete','saveagahi',*/'update',/*'updateagahi',*/'changetaeed','setting','session'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -167,22 +167,28 @@ class AgahiController extends \yii\web\Controller
         return $pic_name;       
     }
 
-    public function actionSaveagahi()
-    {   
-        $cookie=Yii::$app->request->cookies;
-        $city=City::findBySql('SELECT `id` FROM `tbl_city` WHERE `latin_name`="'.$cookie['city']->value.'"')->One();
+    public function actionSaveagahi() 	{ # -- Added Android API -- #
         $model=new Agahi();
         if($model->load(Yii::$app->request->post())):
-           $pic=$_POST['pic_file'];
-           $model->pic=$pic==null?"no":$this->savepic();
-           $model->cat_id=$model->subCat_id;
-           $model->user_id=Yii::$app->session['user_id'];
-           $model->tarikh=Jdf::jdate('Y/m/d');
-           $model->city_id=(string)$city->id;
-           //$model->price = preg_replace('/[^0-9]/', '', $model->price);
-           $model->save();
-           return $this->redirect(Yii::$app->homeUrl.'admin/index');
-           // print_r(\yii\bootstrap\ActiveForm::validate($model));
+			$pic=$_POST['pic_file'];
+	    	if (isset($_POST['android_req'])):
+	        	$city = $_POST['city_id'];
+	        	$model->city_id=(string)$city;
+	        	$model->user_id = $_POST['user_id'];
+	        	$model->pic=$pic=="no"?"no":$this->savepic();
+	        else:
+				$cookie=Yii::$app->request->cookies;
+				$city=City::findBySql('SELECT `id` FROM `tbl_city` WHERE `latin_name`="'.$cookie['city']->value.'"')->One();
+				$model->city_id=(string)$city->id;
+				$model->user_id=Yii::$app->session['user_id'];
+				$model->pic=$pic==null?"no":$this->savepic();
+	        endif;
+			$model->cat_id=$model->subCat_id;
+			$model->tarikh=Jdf::jdate('Y/m/d');
+			//$model->price = preg_replace('/[^0-9]/', '', $model->price);
+			$model->save();
+			if (! isset($_POST['android_req'])) return $this->redirect(Yii::$app->homeUrl.'admin/index');
+			// print_r($model->getErrors());
         endif;
     }
 
@@ -232,7 +238,7 @@ class AgahiController extends \yii\web\Controller
             else:return $this->redirect(Yii::$app->homeUrl);
         endif;
         $cookie=Yii::$app->request->cookies;
-        $city=City::findBySql('SELECT `id` FROM `tbl_city` WHERE `latin_name`="'.$cookie['city']->value.'"')->One();   
+        $city=City::findBySql('SELECT `id` FROM `tbl_city` WHERE `latin_name`="'.$cookie['city']->value.'"')->One();
         $model=Agahi::find()->with('cat')->where(['id'=>$id])->One();
         $mahale=Mahale::find()->where(['city_id'=>$city->id])->All();
         $city=City::find()->All();
@@ -278,21 +284,21 @@ class AgahiController extends \yii\web\Controller
         return $pic_name;       
     }
 
-    public function actionUpdateagahi()
+    public function actionUpdateagahi() # -- Added Android API -- #
     {   
         if(Yii::$app->request->post()):
             $id=$_POST['a_id'];
             $model=new Agahi();
             $model=$model->findOne($id);
-            else:return $this->redirect(Yii::$app->homeUrl);
+        else:return $this->redirect(Yii::$app->homeUrl);
         endif;
         if($model->load(Yii::$app->request->post())):
             $pic_name=$_POST['pic_file'];
-            if($pic_name!=null)$model->pic=$model->pic=='no'?$this->savepic():$this->updatepic($model->pic);
+            if($pic_name!=null || $pic_name!="no")$model->pic=$model->pic=='no'?$this->savepic():$this->updatepic($model->pic);
             $model->cat_id=$model->subCat_id;
             //$model->price = preg_replace('/[^0-9]/', '', $model->price);
             $model->update();
-            return $this->redirect(Yii::$app->homeUrl.'admin/index');
+            if(!isset($_POST['android_req'])) return $this->redirect(Yii::$app->homeUrl.'admin/index');
         endif;
     }
     public function actionChangetaeed()
@@ -327,7 +333,7 @@ class AgahiController extends \yii\web\Controller
         endif;
     }
 
-    public function actionGetdetails() # -- Android API -- #
+    public function actionGetdetails() # -- used for Android API -- #
     {
     	if(Yii::$app->request->post('get_details')):
     		$id = $_POST['a_id'];
@@ -345,8 +351,28 @@ class AgahiController extends \yii\web\Controller
     		$res['userName'] = $detail->user->name.' '.$detail->user->family;
     		$res['tel'] = $detail->user->tel;
     		$res['email'] = $detail->user->email;
+    		$res['catID'] = $parent->id;
+    		$res['childID'] = $detail->cat->id;
+    		$res['mahaleID'] = $detail->mahale->id;
     		echo json_encode($res);
     	endif;
+    }
+    public function actionGetall() # -- Android API -- #
+    {
+        if(Yii::$app->request->post('get_agahi')):
+        	$userId = $_POST['userId']; 
+            $post=Agahi::findBySql('SELECT `id` , `onvan` FROM `tbl_agahi` WHERE `user_id`='.$userId.' ORDER BY `id` DESC')->All();
+            $res=[];
+            $i=0;
+            foreach ($post as $post):
+                $res[$i]['id']=$post->id;
+                $res[$i]['onvan']=$post->onvan;
+                $i++;
+            endforeach;
+            echo json_encode($res);
+        else:
+            return $this->redirect(Yii::$app->homeUrl);
+        endif;  
     }
 }
 

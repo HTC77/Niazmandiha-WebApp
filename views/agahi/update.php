@@ -14,7 +14,7 @@ $url=Yii::$app->homeUrl;
 
         <?= $form->field($model, 'onvan') ?>
         <?= $form->field($model, 'tozihat')->textarea()?>
-        <?= $form->field($model, 'price') ?>
+        <?= $form->field($model, 'price')->label('قیمت (تومان) | توافقی') ?>
        
         
         <?= $form->field($model, 'cat_id')->dropDownList($cat,['prompt'=>'دسته مورد نظر خود را انتخاب کنید']) ?>

@@ -271,11 +271,11 @@ $(document).ready(function() {
 					$('#myModal').modal('show');
 				}
 			});
-		}if(url.includes("delete")){
+		}else if(url.includes("delete")){
 			$('#deleteModal .modal-header h4').html('&nbsp;حذف آگهی شماره '+id);
 			$('#deleteModal #yes').attr({'a_id':+id,'url':url});
 			$('#deleteModal').modal('show');
-		}if(url.includes("update")){
+		}else if(url.includes("update")){
 			$.post(url,{a_id:id},function(res){				
 			if(res!=[]){
 				$('#myModal .modal-header h4').html('&nbsp;ویرایش آگهی شماره '+id);
@@ -355,9 +355,10 @@ $(document).ready(function() {
 			var id=$(this).attr("a_id");
 			var url=$(this).attr("url");
 			$.post(url,{a_id:id},function(res){
-				$('#deleteModal').modal('hide');
 				if(pagination_url!=''){
-					fullRender(pagination_url);
+					fullRender(pagination_url,function(){
+						$('#deleteModal').modal('hide');
+					});
 				}else{
 					render('agahi/view');
 				}
