@@ -45,11 +45,22 @@ class CategoryController extends \yii\web\Controller
     		$cat=Category::find()->where(['parent'=>$_POST['p_id']])->All();
     		$res=[];
     		$i=0;
-    		foreach ($cat as $cat):
-    			$res[$i]['id']=$cat->id;
-    			$res[$i]['onvan']=$cat->onvan;
-    			++$i;
-    		endforeach;
+            if(isset($_POST['agahi_id'])): # -- used for Android API -- #
+                $a_id = $_POST['agahi_id'];
+                $agahi = Agahi::findOne($a_id);
+        		foreach ($cat as $cat):
+        			$res[$i]['id']=$cat->id;
+                    $res[$i]['onvan']=$cat->onvan;
+                    $res[$i]['selected'] = strcmp($cat->id, $agahi->cat_id);
+        			++$i;
+        		endforeach;
+            else:
+                foreach ($cat as $cat):
+                    $res[$i]['id']=$cat->id;
+                    $res[$i]['onvan']=$cat->onvan;
+                    ++$i;
+                endforeach;
+            endif;
     		echo json_encode($res);		
     	}
     	else
@@ -66,13 +77,25 @@ class CategoryController extends \yii\web\Controller
             $cat=Category::find()->where(['parent'=>'y'])->All();
             $res=[];
             $i=0;
-            foreach($cat as $cat):
-                $res[$i]['id']=$cat->id;
-                $res[$i]['onvan']=$cat->onvan;
-                $i++;
-            endforeach;
+            if(isset($_POST['agahi_id'])): # -- used for Android API -- #
+                $a_id = $_POST['agahi_id'];
+                $agahi = Agahi::findOne($a_id);
+                foreach($cat as $cat):
+                    $res[$i]['id']=$cat->id;
+                    $res[$i]['onvan']=$cat->onvan;
+                    $res[$i]['selected'] = strcmp($cat->id, $agahi->cat->parent);
+                    $i++;
+                endforeach;
+            else: 
+                foreach($cat as $cat):
+                    $res[$i]['id']=$cat->id;
+                    $res[$i]['onvan']=$cat->onvan;
+                    $i++;
+                endforeach;
+            endif;
             echo json_encode($res);
         }
+
         else
         {
             return $this->redirect(Yii::$app->homeUrl);

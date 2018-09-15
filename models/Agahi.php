@@ -39,7 +39,7 @@ class Agahi extends \yii\db\ActiveRecord
             [['user_id', 'onvan', 'tozihat', 'tarikh', 'city_id', 'mahale_id', 'cat_id','subCat_id','price'], 'required','message'=>'{attribute} نمی تواند خالی باشد'],
             [['tozihat', 'pic'], 'string'],
             [['user_id','taeed','visit'], 'integer'],
-            [['onvan', 'city_id', 'mahale_id', 'cat_id'], 'string', 'max' => 255],
+            [['onvan'], 'string', 'max' => 255],
             [['price'], 'string', 'max' => 50],
             [['tarikh'], 'string', 'max' => 25],
         ];

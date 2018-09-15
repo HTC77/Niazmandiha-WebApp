@@ -48,11 +48,22 @@ class CityController extends \yii\web\Controller
     		$mahale=Mahale::find()->where(['city_id'=>$_POST['city']])->All();
     		$res=[];
     		$i=0;
-    		foreach ($mahale as $mahale):
-    			$res[$i]['id']=$mahale->id;
-    			$res[$i]['name']=$mahale->name;
-    			++$i;
-    		endforeach;
+    		if(isset($_POST['agahi_id'])): # -- used for Android API -- #
+                $a_id = $_POST['agahi_id'];
+                $agahi = Agahi::findOne($a_id);
+	    		foreach ($mahale as $mahale):
+	    			$res[$i]['id']=$mahale->id;
+	    			$res[$i]['name']=$mahale->name;
+                    $res[$i]['selected'] = strcmp($mahale->id, $agahi->mahale_id);
+	    			++$i;
+	    		endforeach;
+	    	else:
+	    		foreach ($mahale as $mahale):
+	    			$res[$i]['id']=$mahale->id;
+	    			$res[$i]['name']=$mahale->name;
+	    			++$i;
+	    		endforeach;
+	    	endif;
     		echo json_encode($res);		
     	}
     	else
@@ -214,10 +225,20 @@ class CityController extends \yii\web\Controller
         if(Yii::$app->request->post('get_city')):
             $city = City::find()->all();
         	$res = [];
-        	foreach ($city as $i => $row) {
-        		$res[$i]['name'] = $row->persian_name;
-                $res[$i]['id'] = $row->id;
-        	}
+            if(isset($_POST['agahi_id'])): # -- used for Android API -- #
+                $a_id = $_POST['agahi_id'];
+                $agahi = Agahi::findOne($a_id);
+                foreach ($city as $i => $row) {
+                    $res[$i]['name'] = $row->persian_name;
+                    $res[$i]['id'] = $row->id;
+                    $res[$i]['selected'] = strcmp($row->id, $agahi->city_id);
+                }
+            else:    
+            	foreach ($city as $i => $row) {
+            		$res[$i]['name'] = $row->persian_name;
+                    $res[$i]['id'] = $row->id;
+            	}
+            endif;
         	Yii::$app->response->format = Response::FORMAT_JSON;
         	return $res;
         endif;

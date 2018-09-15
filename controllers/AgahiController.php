@@ -294,11 +294,12 @@ class AgahiController extends \yii\web\Controller
         endif;
         if($model->load(Yii::$app->request->post())):
             $pic_name=$_POST['pic_file'];
-            if($pic_name!=null || $pic_name!="no")$model->pic=$model->pic=='no'?$this->savepic():$this->updatepic($model->pic);
+            if(!isset($_POST['android_req'])) if($pic_name!=null)$model->pic=$model->pic=='no'?$this->savepic():$this->updatepic($model->pic);
             $model->cat_id=$model->subCat_id;
             //$model->price = preg_replace('/[^0-9]/', '', $model->price);
             $model->update();
             if(!isset($_POST['android_req'])) return $this->redirect(Yii::$app->homeUrl.'admin/index');
+            echo print_r($model->getErrors());
         endif;
     }
     public function actionChangetaeed()
